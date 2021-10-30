@@ -1,16 +1,14 @@
 # argon2
 
-* **Version:** 0.2-0
-* **Status:** [![Build Status](https://travis-ci.org/wrathematics/argon2.png)](https://travis-ci.org/wrathematics/argon2)
+* **Version:** 0.4-0
 * **License:** [BSD 2-Clause](https://opensource.org/licenses/BSD-2-Clause)
-* **Author:** Drew Schmidt (wrathematics .AT. gmail .DOT. com)
 * **Project home**: https://github.com/wrathematics/argon2
 * **Bug reports**: https://github.com/wrathematics/argon2/issues
 
 
-**argon2** is an R package for secure password hashing via the argon2 algorithm.  It is a relatively new hashing algorithm and is believed to be very secure.  The package also includes some utilities that should be useful for digest authentication, including a wrapper of blake2b.  For similar R packages, see **sodium** and **bcrypt**.
+**argon2** is an R package for secure password hashing via the argon2 algorithm. It is a relatively new hashing algorithm and is believed to be very secure. The package also includes some utilities that should be useful for digest authentication, including a wrapper of blake2b. For similar R packages, see **sodium** and **bcrypt**.
 
-The package includes a source distribution of the latest implementation from the argon2 developers: https://github.com/P-H-C/phc-winner-argon2.  Note that we are unaffiliated with their project; if we break something, don't blame them!
+The package includes a source distribution of the latest implementation from the argon2 developers: https://github.com/P-H-C/phc-winner-argon2. Note that we are unaffiliated with their project; if we break something, don't blame them!
 
 
 
@@ -22,14 +20,13 @@ You can install the stable version from CRAN using the usual `install.packages()
 install.packages("argon2")
 ```
 
-The development version is maintained on GitHub, and can easily be installed by any of the packages that offer installations from GitHub:
+The development version is maintained on GitHub:
 
 ```r
-### Pick your preference
-devtools::install_github("wrathematics/argon2")
-ghit::install_github("wrathematics/argon2")
 remotes::install_github("wrathematics/argon2")
 ```
+
+If you build the package from source, you can enable CPU vectorization optimizations by using the configure flag `--enable-vec`. This improvement can not be made the default because of CRAN rules which I disagree with.
 
 
 

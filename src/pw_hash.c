@@ -25,8 +25,11 @@
 */
 
 
-#include "common.h"
 #include "argon2/argon2.h"
+
+#include "common.h"
+#include "random_uchars.h"
+
 
 #define CHECKRET(check) if (check != ARGON2_OK) error("%s\n", argon2_error_message(check))
 
@@ -39,23 +42,11 @@ uint8_t salt[SALTLEN];
 uint8_t hash[HASHLEN];
 char    enco[ENCOLEN];
 
-#define TIMECOST 20   // Should be more than 10
-#define MEMCOST  8192 // in KiB, so 8MiB
-#define NTHREADS 1    // must be 1 for our windows friends
 #define VERSION  ARGON2_VERSION_13
 
+void secure_wipe_memory(void *v, size_t n);
 
-static inline void clearmem()
-{
-  for (int i=0; i<SALTLEN; i++)
-    salt[i] = 0;
-  
-  for (int i=0; i<HASHLEN; i++)
-    hash[i] = 0;
-  
-  for (int i=0; i<ENCOLEN; i++)
-    enco[i] = '\0';
-}
+
 
 static inline int chartype2inttype(const char ctype)
 {
@@ -78,7 +69,7 @@ static inline int chartype2inttype(const char ctype)
 
 
 
-SEXP R_argon2_hash(SEXP pass_, SEXP type_)
+SEXP R_argon2_hash(SEXP pass_, SEXP type_, SEXP iterations, SEXP space, SEXP nthreads)
 {
   SEXP ret;
   int check;
@@ -88,15 +79,17 @@ SEXP R_argon2_hash(SEXP pass_, SEXP type_)
   
   random_uchars(salt, SALTLEN);
   
-  check = argon2_hash(TIMECOST, MEMCOST, NTHREADS, pass, passlen, salt, SALTLEN,
-    hash, HASHLEN, enco, ENCOLEN, type, VERSION);
+  check = argon2_hash(INT(iterations), INT(space), INT(nthreads), pass, passlen,
+    salt, SALTLEN, hash, HASHLEN, enco, ENCOLEN, type, VERSION);
   
   CHECKRET(check);
   
   PROTECT(ret = allocVector(STRSXP, 1));
   SET_STRING_ELT(ret, 0, mkChar(enco));
   
-  clearmem();
+  secure_wipe_memory(salt, SALTLEN*sizeof(*salt));
+  secure_wipe_memory(hash, HASHLEN*sizeof(*hash));
+  secure_wipe_memory(enco, ENCOLEN*sizeof(*enco));
   
   UNPROTECT(1);
   return ret;
